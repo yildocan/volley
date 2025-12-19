@@ -4,7 +4,10 @@ from sqlalchemy.orm import DeclarativeBase, sessionmaker
 
 
 def get_database_url() -> str:
-    return os.getenv("DATABASE_URL", "sqlite:///./app.db")
+    url = os.getenv("DATABASE_URL", "sqlite:///./app.db")
+    if url.startswith("postgresql://"):
+        return url.replace("postgresql://", "postgresql+psycopg://", 1)
+    return url
 
 
 def _connect_args(database_url: str) -> dict:

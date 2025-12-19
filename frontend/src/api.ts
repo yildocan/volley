@@ -24,7 +24,14 @@ export async function apiRequest<T>(
   });
 
   const text = await response.text();
-  const data = text ? (JSON.parse(text) as T) : ({} as T);
+  let data: T | ApiError = {} as T;
+  if (text) {
+    try {
+      data = JSON.parse(text) as T;
+    } catch {
+      data = { message: text } as ApiError;
+    }
+  }
 
   if (!response.ok) {
     const error = data as ApiError;
