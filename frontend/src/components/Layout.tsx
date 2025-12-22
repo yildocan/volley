@@ -11,7 +11,7 @@ export function AppLayout() {
 
       <header className="relative z-10 mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-6">
         <Link to="/events" className="font-display text-xl font-semibold text-steel">
-          VolleyMatch
+          VoleyTeamMaker
         </Link>
         {token ? (
           <div className="flex items-center gap-3">
@@ -22,7 +22,7 @@ export function AppLayout() {
               className="rounded-full border border-steel/20 px-4 py-1 text-sm text-steel transition hover:border-steel/40"
               onClick={logout}
             >
-              Logout
+              Çıkış
             </button>
           </div>
         ) : null}

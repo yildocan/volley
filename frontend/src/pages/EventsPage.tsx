@@ -13,12 +13,12 @@ export function EventsPage() {
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
-    setLoading(true);
-    setError(null);
-    try {
-      const selected = new Date(`${selectedDate}T00:00:00`);
-      if (Number.isNaN(selected.getTime()) || selected.getDay() !== 4) {
-        setError("Yalniz Persembe gunleri oy kullanilabilir.");
+      setLoading(true);
+      setError(null);
+      try {
+        const selected = new Date(`${selectedDate}T00:00:00`);
+        if (Number.isNaN(selected.getTime()) || selected.getDay() !== 4) {
+        setError("Yalnız Perşembe günleri oy kullanabilirsiniz.");
         setLoading(false);
         return;
       }
@@ -38,8 +38,8 @@ export function EventsPage() {
   return (
     <div className="space-y-8">
       <section className="space-y-3">
-        <p className="text-sm uppercase tracking-[0.3em] text-steel/60">Upcoming sessions</p>
-        <h2 className="font-display text-3xl font-semibold text-steel">Pick the match date</h2>
+        <p className="text-sm uppercase tracking-[0.3em] text-steel/60">Etkinlik</p>
+        <h2 className="font-display text-3xl font-semibold text-steel">Maç tarihini seçin</h2>
       </section>
 
       {error ? <p className="text-sm text-coral">{error}</p> : null}
@@ -49,7 +49,7 @@ export function EventsPage() {
         className="flex flex-col gap-4 rounded-3xl border border-white/60 bg-white/80 p-6 shadow-lift md:flex-row md:items-end"
       >
         <div className="flex-1 space-y-2">
-          <label className="text-sm font-medium text-steel">Match date</label>
+          <label className="text-sm font-medium text-steel">Maç tarihi</label>
           <input
             type="date"
             value={selectedDate}
@@ -63,9 +63,15 @@ export function EventsPage() {
           className="w-full rounded-full bg-tide px-6 py-3 text-sm font-semibold text-white shadow-glow transition hover:bg-tide/90 md:w-auto"
           disabled={loading}
         >
-          {loading ? "Creating event..." : "Continue to voting"}
+          {loading ? "Etkinlik oluşturuluyor..." : "Oy vermeye geç"}
         </button>
       </form>
+
+      <p className="rounded-2xl bg-white/70 px-5 py-4 text-sm text-black shadow-glow">
+        Sadece perşembe günleri etkinlik olduğu için perşembe günleri oylama açabilirsiniz,
+        seçtiğiniz tarih içerisinde etkinliğe katılacak insanları 1-10 arası puan verdikten
+        sonra, min 12 kişi oy kullandığında takımlar görselleşecektir.
+      </p>
     </div>
   );
 }

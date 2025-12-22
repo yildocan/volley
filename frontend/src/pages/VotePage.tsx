@@ -119,26 +119,28 @@ export function VotePage() {
   };
 
   if (loading) {
-    return <p className="text-steel/70">Loading players...</p>;
+    return <p className="text-steel/70">Oyuncular yükleniyor...</p>;
   }
 
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div className="space-y-2">
-          <p className="text-sm uppercase tracking-[0.3em] text-steel/60">Voting</p>
-          <h2 className="font-display text-3xl font-semibold text-steel">Rate each teammate</h2>
+          <p className="text-sm uppercase tracking-[0.3em] text-steel/60">Oy verme</p>
+          <h2 className="font-display text-3xl font-semibold text-steel">
+            Her oyuncuyu puanlayın
+          </h2>
         </div>
         <p className="max-w-md text-sm text-steel/70">
-          Slide from 1 to 10 for every other player. Scores will balance the teams.
+          Diğer oyunculara 1-10 arası puan verin. Skorlar takımları dengeleyecek.
         </p>
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-white/70 p-4 shadow-glow">
         <div>
-          <p className="text-sm font-semibold text-steel">Sonuc Goster</p>
+          <p className="text-sm font-semibold text-steel">Sonuç Göster</p>
           <p className="text-xs text-steel/70">
-            {progress.completed} kisi oy kullandi
+            {progress.completed} kişi oy kullandı
           </p>
         </div>
         <button
@@ -151,7 +153,7 @@ export function VotePage() {
               : "bg-steel text-white hover:bg-steel/90"
           }`}
         >
-          Sonuc Goster ({progress.completed} kisi oy kullandi)
+          Sonuç Göster ({progress.completed} kişi oy kullandı)
         </button>
       </div>
 
@@ -169,7 +171,7 @@ export function VotePage() {
                   <GenderBadge gender={user.gender} />
                   <div>
                     <p className="font-semibold text-steel">{user.username}</p>
-                    <p className="text-xs text-steel/60">Adjust their impact score</p>
+                    <p className="text-xs text-steel/60">Performans puanını ayarla</p>
                   </div>
                 </div>
                 <span className="rounded-full bg-clay px-3 py-1 text-xs font-semibold text-steel">
@@ -198,7 +200,7 @@ export function VotePage() {
           className="rounded-full bg-steel px-6 py-3 text-sm font-semibold text-white shadow-glow transition hover:bg-steel/90"
           disabled={submitting}
         >
-          {submitting ? "Submitting votes..." : "Submit votes"}
+          {submitting ? "Oylar gönderiliyor..." : "Oyları gönder"}
         </button>
       </form>
     </div>

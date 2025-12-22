@@ -3,6 +3,7 @@ import { BrowserRouter, Navigate, Route, Routes, useLocation } from "react-route
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { AppLayout, AuthLayout } from "./components/Layout";
 import { EventsPage } from "./pages/EventsPage";
+import { InfoPage } from "./pages/InfoPage";
 import { LoginPage } from "./pages/LoginPage";
 import { TeamsPage } from "./pages/TeamsPage";
 import { VotePage } from "./pages/VotePage";
@@ -31,6 +32,7 @@ export function App() {
           <Route path="/" element={<IndexRedirect />} />
           <Route element={<AuthLayout />}>
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/info" element={<InfoPage />} />
           </Route>
           <Route
             element={
