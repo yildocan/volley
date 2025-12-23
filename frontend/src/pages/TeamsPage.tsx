@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import { apiRequest } from "../api";
@@ -43,7 +43,7 @@ export function TeamsPage() {
       setLoading(true);
       setError(null);
       try {
-        const event = await apiRequest<{ date: string }>(`/events/${id}`);
+        const event = await apiRequest<{ date: string }>(`/events/${id}`, {}, token);
         const response = await apiRequest<TeamResponse>(`/events/${id}/teams`, {}, token);
         if (mounted) {
           setEventDate(event.date);

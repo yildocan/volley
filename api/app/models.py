@@ -44,6 +44,11 @@ class Event(Base):
     weekly_recurrence: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
 
     votes: Mapped[list[Vote]] = relationship("Vote", back_populates="event", cascade="all, delete-orphan")
+    participants: Mapped[list[EventParticipant]] = relationship(
+        "EventParticipant",
+        back_populates="event",
+        cascade="all, delete-orphan",
+    )
 
 
 class Vote(Base):
@@ -61,3 +66,13 @@ class Vote(Base):
     event: Mapped[Event] = relationship("Event", back_populates="votes")
     voter: Mapped[User] = relationship("User", back_populates="votes_cast", foreign_keys=[voter_id])
     target_user: Mapped[User] = relationship("User", back_populates="votes_received", foreign_keys=[target_user_id])
+
+
+class EventParticipant(Base):
+    __tablename__ = "event_participants"
+
+    event_id: Mapped[str] = mapped_column(String(36), ForeignKey("events.id"), primary_key=True)
+    user_id: Mapped[str] = mapped_column(String(36), ForeignKey("users.id"), primary_key=True)
+
+    event: Mapped[Event] = relationship("Event", back_populates="participants")
+    user: Mapped[User] = relationship("User")

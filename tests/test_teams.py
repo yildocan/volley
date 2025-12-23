@@ -1,4 +1,4 @@
-from .helpers import auth_headers, create_users, get_event_id
+from .helpers import auth_headers, create_event, create_users, login_user, set_participants
 
 
 def test_team_generation_balances_score_and_gender(client):
@@ -6,9 +6,16 @@ def test_team_generation_balances_score_and_gender(client):
         ("player01", "M"), ("player02", "M"), ("player03", "M"), ("player04", "M"), ("player05", "M"), ("player06", "M"),
         ("player07", "F"), ("player08", "F"), ("player09", "F"), ("player10", "F"), ("player11", "F"), ("player12", "F"),
     ]
-    tokens, registered = create_users(client, users)
-    event_id = get_event_id(client)
-    id_map = {user["username"]: user["id"] for user in registered}
+    admin = login_user(client, "Münevver", "F")
+    tokens = create_users(client, users)
+    event_id = create_event(client, admin["access_token"])
+    set_participants(
+        client,
+        admin["access_token"],
+        event_id,
+        [tokens[name]["user_id"] for name, _ in users],
+    )
+    id_map = {name: data["user_id"] for name, data in tokens.items()}
 
     target_scores = {
         "player01": 10,
@@ -32,13 +39,13 @@ def test_team_generation_balances_score_and_gender(client):
             response = client.post(
                 f"/api/events/{event_id}/votes",
                 json={"target_user_id": id_map[target_name], "score": target_scores[target_name]},
-                headers=auth_headers(tokens[voter_name]),
+                headers=auth_headers(tokens[voter_name]["access_token"]),
             )
             assert response.status_code == 201
 
     response = client.get(
         f"/api/events/{event_id}/teams",
-        headers=auth_headers(tokens["player01"]),
+        headers=auth_headers(tokens["player01"]["access_token"]),
     )
     assert response.status_code == 200
     data = response.json()

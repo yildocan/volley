@@ -1,10 +1,13 @@
-from .helpers import auth_headers, login_user
+from .helpers import login_user
 
 
 def test_login_creates_user(client):
-    token = login_user(client, "alex", "M")
-    assert isinstance(token, str)
-    assert token
-    response = client.get("/api/users", headers=auth_headers(token))
-    assert response.status_code == 200
-    assert any(user["username"] == "alex" for user in response.json())
+    data = login_user(client, "alex", "M")
+    assert data["access_token"]
+    assert data["user_id"]
+    assert data["username"] == "alex"
+
+
+def test_admin_detection(client):
+    data = login_user(client, "Münevver", "F")
+    assert data["is_admin"] is True

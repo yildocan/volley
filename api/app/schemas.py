@@ -16,6 +16,7 @@ class TokenResponse(BaseModel):
     token_type: str = "bearer"
     user_id: str
     username: str
+    is_admin: bool = False
 
 
 class UserOut(BaseModel):
@@ -38,6 +39,10 @@ class EventOut(BaseModel):
 class VoteCreate(BaseModel):
     target_user_id: str
     score: int = Field(ge=1, le=10)
+
+
+class ParticipantsUpdate(BaseModel):
+    user_ids: list[str]
 
 
 class ScoreOut(BaseModel):

@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState } from "react";
+﻿import { FormEvent, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import { apiRequest } from "../api";
@@ -26,10 +26,13 @@ export function VotePage() {
     let mounted = true;
 
     const loadUsers = async () => {
+      if (!id) {
+        return;
+      }
       setLoading(true);
       setError(null);
       try {
-        const data = await apiRequest<UserItem[]>("/users", {}, token);
+        const data = await apiRequest<UserItem[]>(`/events/${id}/participants`, {}, token);
         const filtered = data.filter((user) => user.id !== userId);
         if (mounted) {
           setUsers(filtered);
@@ -54,7 +57,7 @@ export function VotePage() {
     return () => {
       mounted = false;
     };
-  }, [token, userId]);
+  }, [id, token, userId]);
 
   const loadProgress = async () => {
     if (!id) {
@@ -139,9 +142,7 @@ export function VotePage() {
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-white/70 p-4 shadow-glow">
         <div>
           <p className="text-sm font-semibold text-steel">Sonuç Göster</p>
-          <p className="text-xs text-steel/70">
-            {progress.completed} kişi oy kullandı
-          </p>
+          <p className="text-xs text-steel/70">{progress.completed} kişi oy kullandı</p>
         </div>
         <button
           type="button"

@@ -1,5 +1,4 @@
 import os
-import unicodedata
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
@@ -9,15 +8,10 @@ from ..core.security import create_access_token
 from ..deps import get_db
 from ..models import User
 from ..schemas import LoginRequest, TokenResponse
+from ..utils import is_admin_user, normalize_name
 
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
-
-
-def _normalize_name(value: str) -> str:
-    value = value.strip().lower()
-    normalized = unicodedata.normalize("NFKD", value)
-    return "".join(char for char in normalized if not unicodedata.combining(char)).replace(" ", "")
 
 
 def _levenshtein(a: str, b: str) -> int:
@@ -41,11 +35,11 @@ def _levenshtein(a: str, b: str) -> int:
 
 
 def _find_best_match(users: list[User], username: str, max_distance: int = 2) -> User | None:
-    target = _normalize_name(username)
+    target = normalize_name(username)
     best_user = None
     best_distance = None
     for user in users:
-        candidate = _normalize_name(user.username)
+        candidate = normalize_name(user.username)
         distance = _levenshtein(target, candidate)
         if best_distance is None or distance < best_distance:
             best_distance = distance
@@ -62,7 +56,12 @@ def login(payload: LoginRequest, db: Session = Depends(get_db)):
         user = db.scalar(select(User).where(User.username == payload.username))
         if user:
             token = create_access_token(user.id)
-            return TokenResponse(access_token=token, user_id=user.id, username=user.username)
+            return TokenResponse(
+                access_token=token,
+                user_id=user.id,
+                username=user.username,
+                is_admin=is_admin_user(user),
+            )
         if payload.gender is None:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -73,13 +72,23 @@ def login(payload: LoginRequest, db: Session = Depends(get_db)):
         db.commit()
         db.refresh(user)
         token = create_access_token(user.id)
-        return TokenResponse(access_token=token, user_id=user.id, username=user.username)
+        return TokenResponse(
+            access_token=token,
+            user_id=user.id,
+            username=user.username,
+            is_admin=is_admin_user(user),
+        )
 
     users = db.scalars(select(User)).all()
     match = _find_best_match(users, payload.username)
 
     if match:
         token = create_access_token(match.id)
-        return TokenResponse(access_token=token, user_id=match.id, username=match.username)
+        return TokenResponse(
+            access_token=token,
+            user_id=match.id,
+            username=match.username,
+            is_admin=is_admin_user(match),
+        )
 
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")

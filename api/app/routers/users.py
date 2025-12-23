@@ -1,10 +1,11 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from ..deps import get_current_user, get_db
 from ..models import User
 from ..schemas import UserOut
+from ..utils import is_admin_user
 
 
 router = APIRouter(prefix="/api/users", tags=["users"])
@@ -12,4 +13,6 @@ router = APIRouter(prefix="/api/users", tags=["users"])
 
 @router.get("", response_model=list[UserOut])
 def list_users(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    if not is_admin_user(current_user):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin access required")
     return db.scalars(select(User).order_by(User.username)).all()

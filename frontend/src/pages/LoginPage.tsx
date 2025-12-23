@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react";
+﻿import { FormEvent, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import { apiRequest } from "../api";
@@ -17,14 +17,19 @@ export function LoginPage() {
     setError(null);
 
     try {
-      const data = await apiRequest<{ access_token: string; username: string; user_id: string }>(
+      const data = await apiRequest<{
+        access_token: string;
+        username: string;
+        user_id: string;
+        is_admin: boolean;
+      }>(
         "/auth/login",
         {
           method: "POST",
           body: JSON.stringify({ username })
         }
       );
-      login(data.access_token, data.username, data.user_id);
+      login(data.access_token, data.username, data.user_id, data.is_admin);
       navigate("/events");
     } catch (err) {
       setError((err as Error).message);

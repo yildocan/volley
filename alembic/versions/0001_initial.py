@@ -44,8 +44,15 @@ def upgrade() -> None:
     op.create_index("ix_votes_voter_id", "votes", ["voter_id"])
     op.create_index("ix_votes_target_user_id", "votes", ["target_user_id"])
 
+    op.create_table(
+        "event_participants",
+        sa.Column("event_id", sa.String(length=36), sa.ForeignKey("events.id"), primary_key=True),
+        sa.Column("user_id", sa.String(length=36), sa.ForeignKey("users.id"), primary_key=True),
+    )
+
 
 def downgrade() -> None:
+    op.drop_table("event_participants")
     op.drop_index("ix_votes_target_user_id", table_name="votes")
     op.drop_index("ix_votes_voter_id", table_name="votes")
     op.drop_index("ix_votes_event_id", table_name="votes")
